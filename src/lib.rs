@@ -1,3 +1,4 @@
+mod query;
 mod response;
 mod error;
 pub mod axum;
@@ -5,6 +6,8 @@ pub mod axum;
 use std::env;
 
 use prost::Message;
+use query::ListProjectsQuery;
+use response::ListProjectsResponse;
 pub use response::ProjectResponse;
 pub use response::SearchResponse;
 pub use response::SearchRecord;
@@ -23,6 +26,19 @@ impl ProjectsClient {
             http_client,
             base_url,
         }
+    }
+
+    pub async fn list_projects(&self, query: ListProjectsQuery) -> Result<ListProjectsResponse, Error> {
+        let response = self.http_client
+            .get(format!("{}/projects?{}", self.base_url, query.to_query_string()))
+            .header(ACCEPT, "application/octet-stream")
+            .send()
+            .await?
+            .error_for_status()?
+            .bytes()
+            .await?;
+
+        Ok(ListProjectsResponse::decode(response)?)
     }
 
     pub async fn get_project_by_id(&self, project_id: &str) -> Result<ProjectResponse, Error> {

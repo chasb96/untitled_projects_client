@@ -1,6 +1,20 @@
 use prost::Message;
 
 #[derive(Message)]
+pub struct ListProjectsResponse {
+    #[prost(message, repeated, tag = "1")]
+    pub projects: Vec<ListProjectsResponseProject>,
+}
+
+#[derive(Message)]
+pub struct ListProjectsResponseProject {
+    #[prost(string, tag = "1")]
+    pub id: String,
+    #[prost(string, tag = "2")]
+    pub name: String,
+}
+
+#[derive(Message)]
 pub struct ProjectResponse {
     #[prost(string, tag = "1")]
     pub id: String,
