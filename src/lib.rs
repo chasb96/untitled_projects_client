@@ -6,11 +6,9 @@ pub mod axum;
 use std::env;
 
 use prost::Message;
-use query::ListProjectsQuery;
-use response::ListProjectsResponse;
-pub use response::ProjectResponse;
-pub use response::SearchResponse;
-pub use response::SearchRecord;
+
+pub use query::*;
+pub use response::*;
 pub use error::Error;
 
 use reqwest::{header::{ACCEPT, CONTENT_TYPE}, Client};
