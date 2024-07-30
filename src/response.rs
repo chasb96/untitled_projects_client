@@ -1,6 +1,12 @@
 use prost::Message;
 
 #[derive(Message)]
+pub struct CreateProjectResponse {
+    #[prost(string, tag = "1")]
+    pub id: String,
+}
+
+#[derive(Message)]
 pub struct ListProjectsResponse {
     #[prost(message, repeated, tag = "1")]
     pub projects: Vec<ListProjectsResponseProject>,
@@ -32,20 +38,4 @@ pub struct ProjectFileResponse {
     pub id: String,
     #[prost(string, tag = "2")]
     pub name: String,
-}
-
-#[derive(Message)]
-pub struct SearchResponse {
-    #[prost(message, repeated, tag = "1")]
-    pub records: Vec<SearchRecord>,
-}
-
-#[derive(Message)]
-pub struct SearchRecord {
-    #[prost(string, tag = "1")]
-    pub project_id: String,
-    #[prost(string, tag = "2")]
-    pub name: String,
-    #[prost(float, tag = "3")]
-    pub score: f32,
 }
