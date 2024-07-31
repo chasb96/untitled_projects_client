@@ -7,7 +7,8 @@ use reqwest::StatusCode;
 pub enum Error {
     Http(reqwest::Error),
     Status(StatusCode),
-    Decode(DecodeError)
+    Decode(DecodeError),
+    Serialize(serde_json::Error),
 }
 
 impl From<reqwest::Error> for Error {
@@ -32,12 +33,19 @@ impl From<DecodeError> for Error {
     }
 }
 
+impl From<serde_json::Error> for Error {
+    fn from(value: serde_json::Error) -> Self {
+        Self::Serialize(value)
+    }
+}
+
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Error::Http(http) => write!(f, "Error calling auth host: {}", http),
-            Error::Status(status) => write!(f, "Auth host returned an error: {}", status),
-            Error::Decode(decode) => write!(f, "Error decoding auth host response: {}", decode),
+            Error::Http(http) => write!(f, "Error calling host: {}", http),
+            Error::Status(status) => write!(f, "Host returned an error: {}", status),
+            Error::Decode(decode) => write!(f, "Error decoding response: {}", decode),
+            Error::Serialize(serialize) => write!(f, "Error serializing request: {}", serialize),
         }
     }
 }

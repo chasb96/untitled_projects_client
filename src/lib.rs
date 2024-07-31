@@ -2,6 +2,7 @@ mod request;
 mod query;
 mod response;
 mod error;
+mod events;
 pub mod axum;
 
 use std::env;
@@ -11,6 +12,7 @@ use prost::Message;
 pub use request::*;
 pub use query::*;
 pub use response::*;
+pub use events::*;
 pub use error::Error;
 
 use reqwest::{header::{ACCEPT, CONTENT_TYPE}, Client};
@@ -68,6 +70,18 @@ impl ProjectsClient {
             .await?;
 
         Ok(ProjectResponse::decode(response)?)
+    }
+
+    pub async fn create_event(&self, project_id: &str, event: EventRequest) -> Result<(), Error> {
+        self.http_client
+            .put(format!("{}/projects/{}", self.base_url, project_id))
+            .header(CONTENT_TYPE, "application/octet-stream")
+            .body(serde_json::to_vec(&event)?)
+            .send()
+            .await?
+            .error_for_status()?;
+
+        Ok(())
     }
 
     pub async fn create_tag(&self, project_id: &str, request: CreateTagRequest) -> Result<(), Error> {
