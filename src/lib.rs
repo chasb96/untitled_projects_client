@@ -94,6 +94,16 @@ impl ProjectsClient {
 
         Ok(ListTagsResponse::decode(response)?)
     }
+
+    pub async fn delete_tag(&self, project_id: &str, tag: &str) -> Result<(), Error> {
+        self.http_client
+            .delete(format!("{}/projects/{}/tags/{}", self.base_url, project_id, tag))
+            .send()
+            .await?
+            .error_for_status()?;
+
+        Ok(())
+    }
 }
 
 impl Default for ProjectsClient {
