@@ -39,3 +39,9 @@ pub struct ProjectFileResponse {
     #[prost(string, tag = "2")]
     pub name: String,
 }
+
+#[derive(Message)]
+pub struct ListTagsResponse {
+    #[prost(string, repeated, tag = "1")]
+    pub tags: Vec<String>,
+}

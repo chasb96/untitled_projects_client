@@ -69,6 +69,31 @@ impl ProjectsClient {
 
         Ok(ProjectResponse::decode(response)?)
     }
+
+    pub async fn create_tag(&self, request: CreateTagRequest) -> Result<(), Error> {
+        self.http_client
+            .post(format!("{}/tags", self.base_url))
+            .header(CONTENT_TYPE, "application/octet-stream")
+            .body(request.encode_to_vec())
+            .send()
+            .await?
+            .error_for_status()?;
+
+        Ok(())
+    }
+
+    pub async fn list_tags(&self) -> Result<ListTagsResponse, Error> {
+        let response = self.http_client
+            .get(format!("{}/tags", self.base_url))
+            .header(ACCEPT, "application/octet-stream")
+            .send()
+            .await?
+            .error_for_status()?
+            .bytes()
+            .await?;
+
+        Ok(ListTagsResponse::decode(response)?)
+    }
 }
 
 impl Default for ProjectsClient {
