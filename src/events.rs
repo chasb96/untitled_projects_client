@@ -4,6 +4,7 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct AddFilesRequest {
+    #[serde(rename = "f")]
     pub files: Vec<AddFileRequest>,
 }
 
