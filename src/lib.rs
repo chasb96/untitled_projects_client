@@ -75,7 +75,7 @@ impl ProjectsClient {
     pub async fn create_event(&self, project_id: &str, event: EventRequest) -> Result<(), Error> {
         self.http_client
             .put(format!("{}/projects/{}", self.base_url, project_id))
-            .header(CONTENT_TYPE, "application/octet-stream")
+            .header(CONTENT_TYPE, "application/json")
             .body(serde_json::to_vec(&event)?)
             .send()
             .await?
