@@ -28,7 +28,9 @@ pub struct ProjectResponse {
     pub name: String,
     #[prost(string, tag = "3")]
     pub user_id: String,
-    #[prost(message, repeated, tag = "4")]
+    #[prost(string, tag = "4")]
+    pub event_id: String,
+    #[prost(message, repeated, tag = "5")]
     pub files: Vec<ProjectFileResponse>,
 }
 
