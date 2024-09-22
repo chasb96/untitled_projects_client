@@ -1,6 +1,6 @@
 mod error;
-mod tags;
-mod threads;
+pub mod tags;
+pub mod threads;
 pub mod axum;
 pub mod create_project;
 pub mod create_event;
@@ -12,8 +12,6 @@ use std::env;
 use prost::Message;
 
 pub use error::Error;
-pub use tags::*;
-pub use threads::*;
 
 use reqwest::Client;
 use reqwest::header::CONTENT_TYPE;
