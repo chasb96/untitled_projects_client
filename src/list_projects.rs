@@ -1,3 +1,5 @@
+use prost::Message;
+
 pub enum ListProjectsQuery {
     Projects { project_ids: Vec<String> },
     Users { user_id: String },
@@ -10,4 +12,18 @@ impl ListProjectsQuery {
             ListProjectsQuery::Users { user_id } => format!("uid={}", user_id),
         }
     }
+}
+
+#[derive(Message)]
+pub struct ListProjectsResponse {
+    #[prost(message, repeated, tag = "1")]
+    pub projects: Vec<ListProjectsResponseProject>,
+}
+
+#[derive(Message)]
+pub struct ListProjectsResponseProject {
+    #[prost(string, tag = "1")]
+    pub id: String,
+    #[prost(string, tag = "2")]
+    pub name: String,
 }

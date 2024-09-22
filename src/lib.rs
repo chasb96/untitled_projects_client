@@ -1,21 +1,25 @@
-mod request;
-mod query;
-mod response;
 mod error;
 mod events;
+mod tags;
+mod threads;
 pub mod axum;
+pub mod create_project;
+pub mod create_event;
+pub mod get_project_by_id;
+pub mod list_projects;
 
 use std::env;
 
 use prost::Message;
 
-pub use request::*;
-pub use query::*;
-pub use response::*;
 pub use events::*;
 pub use error::Error;
+pub use tags::*;
+pub use threads::*;
 
-use reqwest::{header::{ACCEPT, CONTENT_TYPE}, Client};
+use reqwest::Client;
+use reqwest::header::CONTENT_TYPE;
+use reqwest::header::ACCEPT;
 
 pub struct ProjectsClient {
     http_client: Client,
@@ -30,7 +34,7 @@ impl ProjectsClient {
         }
     }
 
-    pub async fn create_project(&self, request: CreateProjectRequest) -> Result<CreateProjectResponse, Error> {
+    pub async fn create_project(&self, request: create_project::CreateProjectRequest) -> Result<create_project::CreateProjectResponse, Error> {
         let response = self.http_client
             .post(format!("{}/projects", self.base_url))
             .header(CONTENT_TYPE, "application/octet-stream")
@@ -42,10 +46,10 @@ impl ProjectsClient {
             .bytes()
             .await?;
 
-        Ok(CreateProjectResponse::decode(response)?)
+        Ok(create_project::CreateProjectResponse::decode(response)?)
     }
 
-    pub async fn list_projects(&self, query: ListProjectsQuery) -> Result<ListProjectsResponse, Error> {
+    pub async fn list_projects(&self, query: list_projects::ListProjectsQuery) -> Result<list_projects::ListProjectsResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects?{}", self.base_url, query.to_query_string()))
             .header(ACCEPT, "application/octet-stream")
@@ -55,10 +59,10 @@ impl ProjectsClient {
             .bytes()
             .await?;
 
-        Ok(ListProjectsResponse::decode(response)?)
+        Ok(list_projects::ListProjectsResponse::decode(response)?)
     }
 
-    pub async fn get_project_by_id(&self, project_id: &str) -> Result<ProjectResponse, Error> {
+    pub async fn get_project_by_id(&self, project_id: &str) -> Result<get_project_by_id::ProjectResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}", self.base_url, project_id))
             .header(ACCEPT, "application/octet-stream")
@@ -69,49 +73,14 @@ impl ProjectsClient {
             .bytes()
             .await?;
 
-        Ok(ProjectResponse::decode(response)?)
+        Ok(get_project_by_id::ProjectResponse::decode(response)?)
     }
 
-    pub async fn create_event(&self, project_id: &str, event: EventRequest) -> Result<(), Error> {
+    pub async fn create_event(&self, project_id: &str, event: create_event::EventRequest) -> Result<(), Error> {
         self.http_client
             .put(format!("{}/projects/{}", self.base_url, project_id))
             .header(CONTENT_TYPE, "application/json")
             .body(serde_json::to_vec(&event)?)
-            .send()
-            .await?
-            .error_for_status()?;
-
-        Ok(())
-    }
-
-    pub async fn create_tag(&self, project_id: &str, request: CreateTagRequest) -> Result<(), Error> {
-        self.http_client
-            .post(format!("{}/projects/{}/tags", self.base_url, project_id))
-            .header(CONTENT_TYPE, "application/octet-stream")
-            .body(request.encode_to_vec())
-            .send()
-            .await?
-            .error_for_status()?;
-
-        Ok(())
-    }
-
-    pub async fn list_tags(&self, project_id: &str) -> Result<ListTagsResponse, Error> {
-        let response = self.http_client
-            .get(format!("{}/projects/{}/tags", self.base_url, project_id))
-            .header(ACCEPT, "application/octet-stream")
-            .send()
-            .await?
-            .error_for_status()?
-            .bytes()
-            .await?;
-
-        Ok(ListTagsResponse::decode(response)?)
-    }
-
-    pub async fn delete_tag(&self, project_id: &str, tag: &str) -> Result<(), Error> {
-        self.http_client
-            .delete(format!("{}/projects/{}/tags/{}", self.base_url, project_id, tag))
             .send()
             .await?
             .error_for_status()?;
