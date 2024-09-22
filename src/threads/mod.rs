@@ -12,7 +12,7 @@ use reqwest::header::CONTENT_TYPE;
 pub trait ProjectThreadsClient {
     async fn list_threads(&self, project_id: &str) -> Result<list_threads::ListThreadsResponse, Error>;
 
-    async fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> Result<(), Error>;
+    async fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> Result<create_thread::CreateThreadResponse, Error>;
 
     async fn get_thread_by_id(&self, project_id: &str, thread_id: &str) -> Result<get_thread_by_id::ThreadResponse, Error>;
 
@@ -33,16 +33,18 @@ impl ProjectThreadsClient for ProjectsClient {
         Ok(list_threads::ListThreadsResponse::decode(response)?)
     }
 
-    async fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> Result<(), Error> {
-        self.http_client
+    async fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> Result<create_thread::CreateThreadResponse, Error> {
+        let response =  self.http_client
             .post(format!("{}/projects/{}/threads", self.base_url, project_id))
             .header(CONTENT_TYPE, "application/octet-stream")
             .body(request.encode_to_vec())
             .send()
             .await?
-            .error_for_status()?;
+            .error_for_status()?
+            .bytes()
+            .await?;
 
-        Ok(())
+        Ok(create_thread::CreateThreadResponse::decode(response)?)
     }
 
     async fn get_thread_by_id(&self, project_id: &str, thread_id: &str) -> Result<get_thread_by_id::ThreadResponse, Error> {
