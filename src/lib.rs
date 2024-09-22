@@ -1,5 +1,4 @@
 mod error;
-mod events;
 mod tags;
 mod threads;
 pub mod axum;
@@ -12,7 +11,6 @@ use std::env;
 
 use prost::Message;
 
-pub use events::*;
 pub use error::Error;
 pub use tags::*;
 pub use threads::*;
