@@ -4,6 +4,8 @@ use prost::Message;
 pub struct CreateCommentRequest {
     #[prost(string, tag = "1")]
     pub content: String,
+    #[prost(string, tag = "2")]
+    pub user_id: String,
 }
 
 #[derive(Message)]

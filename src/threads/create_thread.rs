@@ -4,6 +4,8 @@ use prost::Message;
 pub struct CreateThreadRequest {
     #[prost(string, tag = "1")]
     pub title: String,
+    #[prost(string, tag = "2")]
+    pub user_id: String,
 }
 
 #[derive(Message)]
