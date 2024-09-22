@@ -3,7 +3,7 @@ use prost::Message;
 #[derive(Message)]
 pub struct ListThreadsResponse {
     #[prost(message, repeated, tag = "1")]
-    threads: Vec<ThreadResponse>,
+    pub threads: Vec<ThreadResponse>,
 }
 
 #[derive(Message)]
