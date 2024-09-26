@@ -7,8 +7,8 @@ use reqwest::StatusCode;
 pub enum Error {
     Http(reqwest::Error),
     Status(StatusCode),
-    Decode(DecodeError),
-    Serialize(serde_json::Error),
+    ProtobufDecode(DecodeError),
+    Json(serde_json::Error),
 }
 
 impl From<reqwest::Error> for Error {
@@ -29,13 +29,13 @@ impl From<StatusCode> for Error {
 
 impl From<DecodeError> for Error {
     fn from(value: DecodeError) -> Self {
-        Self::Decode(value)
+        Self::ProtobufDecode(value)
     }
 }
 
 impl From<serde_json::Error> for Error {
     fn from(value: serde_json::Error) -> Self {
-        Self::Serialize(value)
+        Self::Json(value)
     }
 }
 
@@ -44,8 +44,8 @@ impl Display for Error {
         match self {
             Error::Http(http) => write!(f, "Error calling host: {}", http),
             Error::Status(status) => write!(f, "Host returned an error: {}", status),
-            Error::Decode(decode) => write!(f, "Error decoding response: {}", decode),
-            Error::Serialize(serialize) => write!(f, "Error serializing request: {}", serialize),
+            Error::ProtobufDecode(decode) => write!(f, "Error decoding response: {}", decode),
+            Error::Json(json) => write!(f, "Error in JSON: {}", json),
         }
     }
 }
