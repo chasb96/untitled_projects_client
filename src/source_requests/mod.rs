@@ -27,7 +27,7 @@ pub trait ProjectSourceRequestsClient {
 impl ProjectSourceRequestsClient for ProjectsClient {
     async fn list_source_requests(&self, project_id: &str) -> Result<ListSourceRequestsResponse, Error> {
         let response = self.http_client
-            .post(format!("{}/projects/{}/source_requests", self.base_url, project_id))
+            .get(format!("{}/projects/{}/source_requests", self.base_url, project_id))
             .send()
             .await?
             .error_for_status()?
