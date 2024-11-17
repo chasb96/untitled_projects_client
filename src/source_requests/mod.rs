@@ -12,9 +12,12 @@ use reqwest::header::ACCEPT;
 use reqwest::header::CONTENT_TYPE;
 use approve_sourcce_request::ApproveSourceRequestRequest;
 use complete_source_request::CompleteSourceRequestRequest;
+use list_source_requests::SourceRequest;
 use list_source_requests::ListSourceRequestsResponse;
 
 pub trait ProjectSourceRequestsClient {
+    async fn get_source_request(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequest, Error>;
+
     async fn list_source_requests(&self, project_id: &str) -> Result<ListSourceRequestsResponse, Error>;
 
     async fn create_source_request(&self, project_id: &str, request: CreateSourceRequestRequest) -> Result<CreateSourceRequestResponse, Error>;
@@ -25,6 +28,18 @@ pub trait ProjectSourceRequestsClient {
 }
 
 impl ProjectSourceRequestsClient for ProjectsClient {
+    async fn get_source_request(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequest, Error> {
+        let response = self.http_client
+            .get(format!("{}/projects/{}/source_requests/{}", self.base_url, project_id, source_request_id))
+            .send()
+            .await?
+            .error_for_status()?
+            .bytes()
+            .await?;
+
+        Ok(serde_json::from_slice(&response)?)
+    }
+
     async fn list_source_requests(&self, project_id: &str) -> Result<ListSourceRequestsResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}/source_requests", self.base_url, project_id))
