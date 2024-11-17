@@ -2,6 +2,7 @@ pub mod create_source_request;
 pub mod approve_sourcce_request;
 pub mod complete_source_request;
 pub mod list_source_requests;
+pub mod get_source_request;
 
 use crate::ProjectsClient;
 use create_source_request::CreateSourceRequestRequest;
@@ -12,7 +13,7 @@ use reqwest::header::ACCEPT;
 use reqwest::header::CONTENT_TYPE;
 use approve_sourcce_request::ApproveSourceRequestRequest;
 use complete_source_request::CompleteSourceRequestRequest;
-use list_source_requests::SourceRequest;
+use get_source_request::SourceRequest;
 use list_source_requests::ListSourceRequestsResponse;
 
 pub trait ProjectSourceRequestsClient {
