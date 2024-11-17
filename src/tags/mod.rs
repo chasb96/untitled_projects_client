@@ -6,13 +6,14 @@ use crate::ProjectsClient;
 use reqwest::header::CONTENT_TYPE;
 use prost::Message;
 use reqwest::header::ACCEPT;
+use std::future::Future;
 
 pub trait ProjectTagsClient {
-    async fn create_tag(&self, project_id: &str, request: create_tag::CreateTagRequest) -> Result<(), Error>;
+    fn create_tag(&self, project_id: &str, request: create_tag::CreateTagRequest) -> impl Future<Output = Result<(), Error>> + Send;
     
-    async fn list_tags(&self, project_id: &str) -> Result<list_tags::ListTagsResponse, Error>;
+    fn list_tags(&self, project_id: &str) -> impl Future<Output = Result<list_tags::ListTagsResponse, Error>> + Send;
 
-    async fn delete_tag(&self, project_id: &str, tag: &str) -> Result<(), Error>;
+    fn delete_tag(&self, project_id: &str, tag: &str) -> impl Future<Output = Result<(), Error>> + Send;
 }
 
 impl ProjectTagsClient for ProjectsClient {

@@ -1,3 +1,4 @@
+#[deny(warnings)]
 mod error;
 pub mod tags;
 pub mod threads;

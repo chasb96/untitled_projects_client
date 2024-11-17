@@ -15,17 +15,18 @@ use approve_sourcce_request::ApproveSourceRequestRequest;
 use complete_source_request::CompleteSourceRequestRequest;
 use get_source_request::SourceRequest;
 use list_source_requests::ListSourceRequestsResponse;
+use std::future::Future;
 
 pub trait ProjectSourceRequestsClient {
-    async fn get_source_request(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequest, Error>;
+    fn get_source_request(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<SourceRequest, Error>> + Send;
 
-    async fn list_source_requests(&self, project_id: &str) -> Result<ListSourceRequestsResponse, Error>;
+    fn list_source_requests(&self, project_id: &str) -> impl Future<Output = Result<ListSourceRequestsResponse, Error>> + Send;
 
-    async fn create_source_request(&self, project_id: &str, request: CreateSourceRequestRequest) -> Result<CreateSourceRequestResponse, Error>;
+    fn create_source_request(&self, project_id: &str, request: CreateSourceRequestRequest) -> impl Future<Output = Result<CreateSourceRequestResponse, Error>> + Send;
 
-    async fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: ApproveSourceRequestRequest) -> Result<(), Error>;
+    fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: ApproveSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
 
-    async fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: CompleteSourceRequestRequest) -> Result<(), Error>;
+    fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: CompleteSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
 }
 
 impl ProjectSourceRequestsClient for ProjectsClient {

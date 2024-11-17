@@ -8,15 +8,16 @@ use crate::Error;
 use prost::Message;
 use reqwest::header::ACCEPT;
 use reqwest::header::CONTENT_TYPE;
+use std::future::Future;
 
 pub trait ProjectThreadsClient {
-    async fn list_threads(&self, project_id: &str) -> Result<list_threads::ListThreadsResponse, Error>;
+    fn list_threads(&self, project_id: &str) -> impl Future<Output = Result<list_threads::ListThreadsResponse, Error>> + Send;
 
-    async fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> Result<create_thread::CreateThreadResponse, Error>;
+    fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> impl Future<Output = Result<create_thread::CreateThreadResponse, Error>> + Send;
 
-    async fn get_thread_by_id(&self, project_id: &str, thread_id: &str) -> Result<get_thread_by_id::ThreadResponse, Error>;
+    fn get_thread_by_id(&self, project_id: &str, thread_id: &str) -> impl Future<Output = Result<get_thread_by_id::ThreadResponse, Error>> + Send;
 
-    async fn create_comment(&self, project_id: &str, thread_id: &str, request: create_comment::CreateCommentRequest) -> Result<create_comment::CreateCommentResponse, Error>;
+    fn create_comment(&self, project_id: &str, thread_id: &str, request: create_comment::CreateCommentRequest) -> impl Future<Output = Result<create_comment::CreateCommentResponse, Error>> + Send;
 }
 
 impl ProjectThreadsClient for ProjectsClient {
