@@ -3,6 +3,7 @@ pub mod approve_sourcce_request;
 pub mod complete_source_request;
 pub mod list_source_requests;
 pub mod get_source_request;
+pub mod comments;
 
 use crate::ProjectsClient;
 use create_source_request::CreateSourceRequestRequest;
@@ -17,7 +18,7 @@ use get_source_request::SourceRequest;
 use list_source_requests::ListSourceRequestsResponse;
 use std::future::Future;
 
-pub trait ProjectSourceRequestsClient {
+pub trait SourceRequestsClient {
     fn get_source_request(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<SourceRequest, Error>> + Send;
 
     fn list_source_requests(&self, project_id: &str) -> impl Future<Output = Result<ListSourceRequestsResponse, Error>> + Send;
@@ -29,7 +30,8 @@ pub trait ProjectSourceRequestsClient {
     fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: CompleteSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
 }
 
-impl ProjectSourceRequestsClient for ProjectsClient {
+
+impl SourceRequestsClient for ProjectsClient {
     async fn get_source_request(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequest, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}/source_requests/{}", self.base_url, project_id, source_request_id))

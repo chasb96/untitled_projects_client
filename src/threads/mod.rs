@@ -10,7 +10,7 @@ use reqwest::header::ACCEPT;
 use reqwest::header::CONTENT_TYPE;
 use std::future::Future;
 
-pub trait ProjectThreadsClient {
+pub trait ThreadsClient {
     fn list_threads(&self, project_id: &str) -> impl Future<Output = Result<list_threads::ListThreadsResponse, Error>> + Send;
 
     fn create_thread(&self, project_id: &str, request: create_thread::CreateThreadRequest) -> impl Future<Output = Result<create_thread::CreateThreadResponse, Error>> + Send;
@@ -20,7 +20,7 @@ pub trait ProjectThreadsClient {
     fn create_comment(&self, project_id: &str, thread_id: &str, request: create_comment::CreateCommentRequest) -> impl Future<Output = Result<create_comment::CreateCommentResponse, Error>> + Send;
 }
 
-impl ProjectThreadsClient for ProjectsClient {
+impl ThreadsClient for ProjectsClient {
     async fn list_threads(&self, project_id: &str) -> Result<list_threads::ListThreadsResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}/threads", self.base_url, project_id))

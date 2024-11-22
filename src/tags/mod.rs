@@ -8,7 +8,7 @@ use prost::Message;
 use reqwest::header::ACCEPT;
 use std::future::Future;
 
-pub trait ProjectTagsClient {
+pub trait TagsClient {
     fn create_tag(&self, project_id: &str, request: create_tag::CreateTagRequest) -> impl Future<Output = Result<(), Error>> + Send;
     
     fn list_tags(&self, project_id: &str) -> impl Future<Output = Result<list_tags::ListTagsResponse, Error>> + Send;
@@ -16,7 +16,7 @@ pub trait ProjectTagsClient {
     fn delete_tag(&self, project_id: &str, tag: &str) -> impl Future<Output = Result<(), Error>> + Send;
 }
 
-impl ProjectTagsClient for ProjectsClient {
+impl TagsClient for ProjectsClient {
     async fn create_tag(&self, project_id: &str, request: create_tag::CreateTagRequest) -> Result<(), Error> {
         self.http_client
             .post(format!("{}/projects/{}/tags", self.base_url, project_id))
