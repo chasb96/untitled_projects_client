@@ -4,6 +4,7 @@ pub mod complete_source_request;
 pub mod list_source_requests;
 pub mod get_source_request;
 pub mod comments;
+pub mod get_source_request_diff;
 
 use crate::ProjectsClient;
 use create_source_request::CreateSourceRequestRequest;
@@ -17,6 +18,7 @@ use complete_source_request::CompleteSourceRequestRequest;
 use get_source_request::SourceRequest;
 use list_source_requests::ListSourceRequestsResponse;
 use std::future::Future;
+use get_source_request_diff::SourceRequestDiffResponse;
 
 pub trait SourceRequestsClient {
     fn get_source_request(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<SourceRequest, Error>> + Send;
@@ -28,6 +30,8 @@ pub trait SourceRequestsClient {
     fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: ApproveSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
 
     fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: CompleteSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
+
+    fn get_source_request_diff(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<SourceRequestDiffResponse, Error>> + Send;
 }
 
 
@@ -95,5 +99,17 @@ impl SourceRequestsClient for ProjectsClient {
             .error_for_status()?;
 
         Ok(())
+    }
+
+    async fn get_source_request_diff(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequestDiffResponse, Error> {
+        let response = self.http_client
+            .get(format!("{}/projects/{}/source_requests/{}/diff", self.base_url, project_id, source_request_id))
+            .send()
+            .await?
+            .error_for_status()?
+            .bytes()
+            .await?;
+
+        Ok(SourceRequestDiffResponse::decode(response)?)
     }
 }
