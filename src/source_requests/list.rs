@@ -1,31 +1,31 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub struct ListSourceRequestsResponse {
+pub struct ListResponse {
     #[serde(rename = "sr")]
-    pub source_requests: Vec<ListSourceRequestItem>,
+    pub source_requests: Vec<SourceRequest>,
 }
 
 #[derive(Deserialize)]
-pub struct ListSourceRequestItem {
+pub struct SourceRequest {
     #[serde(rename = "id")]
     pub id: String,
     #[serde(rename = "sr")]
-    pub source_request: SourceRequestSummary,
+    pub source_request: Summary,
 }
 
 #[derive(Deserialize)]
-pub enum SourceRequestSummary {
+pub enum Summary {
     #[serde(rename = "n")]
-    New(NewSourceRequestSummary),
+    New(New),
     #[serde(rename = "a")]
-    Approved(ApprovedSourceRequestSummary),
+    Approved(Approved),
     #[serde(rename = "c")]
-    Completed(CompletedSourceRequestSummary),
+    Completed(Completed),
 }
 
 #[derive(Deserialize)]
-pub struct NewSourceRequestSummary {
+pub struct New {
     #[serde(rename = "p")]
     pub project_id: String,
     #[serde(rename = "u")]
@@ -34,7 +34,7 @@ pub struct NewSourceRequestSummary {
     pub title: String,
 }
 #[derive(Deserialize)]
-pub struct ApprovedSourceRequestSummary {
+pub struct Approved {
     #[serde(rename = "p")]
     pub project_id: String,
     #[serde(rename = "u")]
@@ -44,7 +44,7 @@ pub struct ApprovedSourceRequestSummary {
 }
 
 #[derive(Deserialize)]
-pub struct CompletedSourceRequestSummary {
+pub struct Completed {
     #[serde(rename = "p")]
     pub project_id: String,
     #[serde(rename = "u")]

@@ -1,42 +1,35 @@
-pub mod create_source_request;
-pub mod approve_sourcce_request;
-pub mod complete_source_request;
-pub mod list_source_requests;
-pub mod get_source_request;
+pub mod create;
+pub mod approve;
+pub mod complete;
+pub mod list;
+pub mod get_by_id;
 pub mod comments;
-pub mod get_source_request_diff;
+pub mod diff;
 
 use crate::ProjectsClient;
-use create_source_request::CreateSourceRequestRequest;
-use create_source_request::CreateSourceRequestResponse;
 use crate::Error;
 use prost::Message;
 use reqwest::header::ACCEPT;
 use reqwest::header::CONTENT_TYPE;
-use approve_sourcce_request::ApproveSourceRequestRequest;
-use complete_source_request::CompleteSourceRequestRequest;
-use get_source_request::SourceRequest;
-use list_source_requests::ListSourceRequestsResponse;
 use std::future::Future;
-use get_source_request_diff::SourceRequestDiffResponse;
 
 pub trait SourceRequestsClient {
-    fn get_source_request(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<SourceRequest, Error>> + Send;
+    fn get_source_request(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<get_by_id::GetByIdResponse, Error>> + Send;
 
-    fn list_source_requests(&self, project_id: &str) -> impl Future<Output = Result<ListSourceRequestsResponse, Error>> + Send;
+    fn list_source_requests(&self, project_id: &str) -> impl Future<Output = Result<list::ListResponse, Error>> + Send;
 
-    fn create_source_request(&self, project_id: &str, request: CreateSourceRequestRequest) -> impl Future<Output = Result<CreateSourceRequestResponse, Error>> + Send;
+    fn create_source_request(&self, project_id: &str, request: create::CreateRequest) -> impl Future<Output = Result<create::CreateResponse, Error>> + Send;
 
-    fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: ApproveSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
+    fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: approve::ApproveRequest) -> impl Future<Output = Result<(), Error>> + Send;
 
-    fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: CompleteSourceRequestRequest) -> impl Future<Output = Result<(), Error>> + Send;
+    fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: complete::CompleteRequest) -> impl Future<Output = Result<(), Error>> + Send;
 
-    fn get_source_request_diff(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<SourceRequestDiffResponse, Error>> + Send;
+    fn get_source_request_diff(&self, project_id: &str, source_request_id: &str) -> impl Future<Output = Result<diff::DiffResponse, Error>> + Send;
 }
 
 
 impl SourceRequestsClient for ProjectsClient {
-    async fn get_source_request(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequest, Error> {
+    async fn get_source_request(&self, project_id: &str, source_request_id: &str) -> Result<get_by_id::GetByIdResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}/source_requests/{}", self.base_url, project_id, source_request_id))
             .send()
@@ -48,7 +41,7 @@ impl SourceRequestsClient for ProjectsClient {
         Ok(serde_json::from_slice(&response)?)
     }
 
-    async fn list_source_requests(&self, project_id: &str) -> Result<ListSourceRequestsResponse, Error> {
+    async fn list_source_requests(&self, project_id: &str) -> Result<list::ListResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}/source_requests", self.base_url, project_id))
             .send()
@@ -60,7 +53,7 @@ impl SourceRequestsClient for ProjectsClient {
         Ok(serde_json::from_slice(&response)?)
     }
 
-    async fn create_source_request(&self, project_id: &str, request: CreateSourceRequestRequest) -> Result<CreateSourceRequestResponse, Error> {
+    async fn create_source_request(&self, project_id: &str, request: create::CreateRequest) -> Result<create::CreateResponse, Error> {
         let response = self.http_client
             .post(format!("{}/projects/{}/source_requests", self.base_url, project_id))
             .header(ACCEPT, "application/octet-stream")
@@ -72,10 +65,10 @@ impl SourceRequestsClient for ProjectsClient {
             .bytes()
             .await?;
 
-        Ok(CreateSourceRequestResponse::decode(response)?)
+        Ok(create::CreateResponse::decode(response)?)
     }
     
-    async fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: ApproveSourceRequestRequest) -> Result<(), Error> {
+    async fn approve_source_request(&self, project_id: &str, source_request_id: &str, request: approve::ApproveRequest) -> Result<(), Error> {
         self.http_client
             .post(format!("{}/projects/{}/source_requests/{}/approve", self.base_url, project_id, source_request_id))
             .header(ACCEPT, "application/octet-stream")
@@ -88,7 +81,7 @@ impl SourceRequestsClient for ProjectsClient {
         Ok(())
     }
     
-    async fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: CompleteSourceRequestRequest) -> Result<(), Error> {
+    async fn complete_source_request(&self, project_id: &str, source_request_id: &str, request: complete::CompleteRequest) -> Result<(), Error> {
         self.http_client
             .post(format!("{}/projects/{}/source_requests/{}/complete", self.base_url, project_id, source_request_id))
             .header(ACCEPT, "application/octet-stream")
@@ -101,7 +94,7 @@ impl SourceRequestsClient for ProjectsClient {
         Ok(())
     }
 
-    async fn get_source_request_diff(&self, project_id: &str, source_request_id: &str) -> Result<SourceRequestDiffResponse, Error> {
+    async fn get_source_request_diff(&self, project_id: &str, source_request_id: &str) -> Result<diff::DiffResponse, Error> {
         let response = self.http_client
             .get(format!("{}/projects/{}/source_requests/{}/diff", self.base_url, project_id, source_request_id))
             .send()
@@ -110,6 +103,6 @@ impl SourceRequestsClient for ProjectsClient {
             .bytes()
             .await?;
 
-        Ok(SourceRequestDiffResponse::decode(response)?)
+        Ok(diff::DiffResponse::decode(response)?)
     }
 }

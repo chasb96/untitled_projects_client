@@ -2,13 +2,13 @@ use std::collections::HashSet;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub enum SourceRequest {
+pub enum GetByIdResponse {
     #[serde(rename = "n")]
-    New(NewSourceRequest),
+    New(New),
     #[serde(rename = "a")]
-    Approved(ApprovedSourceRequest),
+    Approved(Approved),
     #[serde(rename = "c")]
-    Completed(CompletedSourceRequest),
+    Completed(Completed),
 }
 
 #[derive(Deserialize)]
@@ -20,7 +20,7 @@ pub struct FileMap {
 }
 
 #[derive(Deserialize)]
-pub struct NewSourceRequest {
+pub struct New {
     #[serde(rename = "p")]
     pub project_id: String,
     #[serde(rename = "u")]
@@ -34,7 +34,7 @@ pub struct NewSourceRequest {
 }
 
 #[derive(Deserialize)]
-pub struct ApprovedSourceRequest {
+pub struct Approved {
     #[serde(rename = "p")]
     pub project_id: String,
     #[serde(rename = "u")]
@@ -50,7 +50,7 @@ pub struct ApprovedSourceRequest {
 }
 
 #[derive(Deserialize)]
-pub struct CompletedSourceRequest {
+pub struct Completed {
     #[serde(rename = "p")]
     pub project_id: String,
     #[serde(rename = "u")]

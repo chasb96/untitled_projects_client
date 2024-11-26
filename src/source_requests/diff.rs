@@ -2,13 +2,13 @@ use prost::Message;
 use std::collections::HashMap;
 
 #[derive(Message)]
-pub struct SourceRequestDiffResponse {
+pub struct DiffResponse {
     #[prost(map = "string, message", tag = "1")]
-    pub diff_items: HashMap<String, SourceRequestDiffItem>
+    pub diff_items: HashMap<String, DiffItem>
 }
 
 #[derive(PartialEq, Message)]
-pub struct SourceRequestDiffItem {
+pub struct DiffItem {
     #[prost(string, tag = "1")]
     pub from: String,
     #[prost(string, tag = "2")]

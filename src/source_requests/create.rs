@@ -1,7 +1,7 @@
 use prost::Message;
 
 #[derive(Message)]
-pub struct CreateSourceRequestRequest {
+pub struct CreateRequest {
     #[prost(string, tag = "1")]
     pub user_id: String,
     #[prost(string, tag = "2")]
@@ -21,7 +21,7 @@ pub struct FileMap {
 }
 
 #[derive(Message)]
-pub struct CreateSourceRequestResponse {
+pub struct CreateResponse {
     #[prost(string, tag = "1")]
     pub id: String,
 }
